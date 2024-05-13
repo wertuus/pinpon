@@ -41,25 +41,61 @@ FPS = 160
 
 game =  True
 finish = False
-num_fire = 0
 
 font.init()
-font1 = font.SysFont('Arial', 80 )
-win = font1.render('YOU WIN!', True, (255, 255, 255))
-lose = font1.render('YOU LOSE!', True, (180, 0, 0))
-font2 = font.SysFont('Arial', 36)
+font1 = font.SysFont('Arial', 40 )
+lose1 = font1.render('Player 1 lose!', True, (255, 0, 0))
+lose2 = font1.render('player 2 lose!', True, (255, 0, 0))
+score_text = font1.render('Счёт', True, (0, 0, 0))
+score_1_text = font1.render('0', True, (80, 200, 255))
+score_2_text = font1.render('0', True, (80, 200, 255))
+
+speed_x = 4
+speed_y = 2
+
+score_1 = 0 
+score_2 = 0
 
 while game:
     for e in event.get():
         if e.type == QUIT:
             game = False
-    if not finish:
+    if finish != True:
         window.fill(background)
+        ball.rect.x += speed_x
+        ball.rect.y += speed_y
+        window.blit(score_text, (320, 400))
+
+        if sprite.collide_rect(racket1, ball):
+            speed_x = speed_x * -1
+            score_1 += 1
+            score_1_text = font1.render(str(score_1), True, (80, 200, 255))
+
+        if sprite.collide_rect(racket2, ball):
+            speed_x = speed_x * -1
+            score_2 += 1
+            score_2_text = font1.render(str(score_2), True, (80, 200, 255))
+
+        if ball.rect.y < 0 or ball.rect.y > 500 -50:
+            speed_y = speed_y * -1
+
+        if ball.rect.x < 0:
+            finish = True
+            window.blit(lose1, (200, 200))
+            game_over = True
+        
+        if ball.rect.x > 700-50:
+            finish = True
+            window.blit(lose2, (200, 200))
+            game_over = True
+        
+        window.blit(score_1_text,(50, 400))
+        window.blit(score_2_text, (640, 400))
         racket1.update_l()
         racket2.update_r()
         racket1.reset()
-        racket2.reset()
-        display.update()
-
+        racket2.reset()    
+        ball.reset()
+    display.update()
     clock.tick(FPS)
 
